@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TilePlugin;
 using cakeslice;
+using CharacterStatePlugIn;
 
 public class EventController : MonoBehaviour {
 
@@ -13,11 +14,26 @@ public class EventController : MonoBehaviour {
     LineRenderer lineRenderer;
     [SerializeField]
     float laserYPositionCorrection = 5;
-    // Use this for initialization
+
+    [SerializeField]
+    Transform userCharacter;
+    [SerializeField]
+    Vector3 userCharacterStartPosition = new Vector3(0, 2, 0);
+    
+
+    //-------------MoveMent
+
+    
+
+    public List<Transform> pathBuffer = new List<Transform>();
+    //--------------
+  
     void Start () {
         map = Camera.main.GetComponent<MapCreator>().map;
         lineRenderer = this.GetComponent<LineRenderer>();
-	}
+
+       userCharacter =  Instantiate(userCharacter, userCharacterStartPosition, Quaternion.Euler(0, 180, 0));
+    }
 
     public Transform lowest(List<Transform> openlist)
     {
@@ -92,6 +108,7 @@ public class EventController : MonoBehaviour {
                
                 pathList.Reverse();
                 pathList.Add(destTile);
+                
                 return pathList;
             }
             openList.Remove(current);
@@ -130,17 +147,31 @@ public class EventController : MonoBehaviour {
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
+
+        Vector2 virtualPosition = userCharacter.GetComponent<CharacterState>().virtualPosition;
+        //float speed = userCharacter.GetComponent<CharacterState>().speed;
+
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.transform.tag == "Tile")
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    List <Transform> path = findPath(map[new Vector2(0,0)], hit.transform);
-                    //Debug.Log(path.Count);
+                    
+
+                     pathBuffer = findPath(map[virtualPosition], hit.transform);
+                    foreach (Transform tile in map.Values)
+                    {
+                        tile.GetComponent<Tile>().NavigationFather = null;
+                    }
+
+                    //MovementState moveState = userCharacter.GetComponent<CharacterState>().moveState;
+
+
+
+                    //------------drawLine Part
                     List<Vector3> v3List = new List<Vector3>();
-                    foreach (Transform tile in path)
+                    foreach (Transform tile in pathBuffer)
                     {
                         
                         Vector3 pos = new Vector3(tile.transform.position.x,
@@ -166,5 +197,11 @@ public class EventController : MonoBehaviour {
                 //-------------
             }
         }
+
+        //--for while just
+       
+        
+
+
     }
 }

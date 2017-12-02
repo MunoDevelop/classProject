@@ -21,8 +21,7 @@ public class MapCreator : MonoBehaviour {
     [SerializeField]
     float NoiseLevel = 10;
 
-    [SerializeField]
-    Transform userCharacter;
+    
 
     enum NeighborType
     { leftTop, rightTop, right, rightBottom, leftBottom, left }
@@ -209,7 +208,7 @@ public class MapCreator : MonoBehaviour {
             FindNeighbors(tile);
         }
 
-        Instantiate(userCharacter, new Vector3(0, 2, 0), Quaternion.Euler(0, 180, 0));
+        
         //Debug.Log(centerTile.GetComponent<Outline>().enabled.ToString());
         //float y = PerlinPlugin.Perlin.Noise(1.0f, 2.0f);
         //Debug.Log(y);
