@@ -177,7 +177,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!84 &105260634
+--- !u!84 &523449766
 RenderTexture:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -186,35 +186,8 @@ RenderTexture:
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
-  m_Width: 1170
-  m_Height: 615
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 0
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 0
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
---- !u!84 &791595702
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_Width: 1170
-  m_Height: 615
+  m_Width: 1015
+  m_Height: 564
   m_AntiAliasing: 1
   m_DepthFormat: 1
   m_ColorFormat: 0
@@ -462,6 +435,8 @@ MonoBehaviour:
   NoiseSeed: 7
   MapSize: 7
   NoiseLevel: 6
+  blockRate: 30
+  blockedMat: {fileID: 2100000, guid: c22939d04ea924e4f8433e842e93a36c, type: 2}
 --- !u!114 &905268218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,8 +464,8 @@ MonoBehaviour:
   sourceCamera: {fileID: 905268215}
   outlineCamera: {fileID: 1473908216}
   outlineShaderMaterial: {fileID: 0}
-  renderTexture: {fileID: 105260634}
-  extraRenderTexture: {fileID: 791595702}
+  renderTexture: {fileID: 1991318951}
+  extraRenderTexture: {fileID: 523449766}
 --- !u!1 &1473908215
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,7 +508,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 0
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 105260634}
+  m_TargetTexture: {fileID: 1991318951}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -555,3 +530,30 @@ Transform:
   m_Father: {fileID: 905268216}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &1991318951
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_Width: 1015
+  m_Height: 564
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1

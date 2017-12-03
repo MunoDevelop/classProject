@@ -19,6 +19,10 @@ namespace TilePlugin
         public int Navigation_F ;
         [HideInInspector]
         public bool MoveAble = true;
+
+        [HideInInspector]
+        public List<Transform> layerList;
+
         [HideInInspector]
         public Transform NavigationFather;
 

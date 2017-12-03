@@ -20,7 +20,10 @@ public class MapCreator : MonoBehaviour {
 
     [SerializeField]
     float NoiseLevel = 10;
-
+    [SerializeField]
+    int blockRate = 30;
+    [SerializeField]
+    Material blockedMat;
     
 
     enum NeighborType
@@ -206,6 +209,20 @@ public class MapCreator : MonoBehaviour {
         foreach (Transform tile in map.Values)
         {
             FindNeighbors(tile);
+             if (tile == centerTile){
+                   continue;
+               }
+            int rand = Random.Range(0, 100);
+            if(rand<=blockRate)
+            {
+                Material[] mats = tile.GetComponent<MeshRenderer>().materials;
+                mats[2] = blockedMat;
+                tile.GetComponent<MeshRenderer>().materials = mats;
+                tile.GetComponent<Tile>().MoveAble = false;
+            }
+
+
+            
         }
 
         
