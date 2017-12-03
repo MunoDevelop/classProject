@@ -23,6 +23,8 @@ namespace CharacterStatePlugIn
         
         [SerializeField]
         public float speed;
+        [SerializeField]
+        public float rotateYieldTime = 0;
 
         Dictionary<Vector2, Transform> map;
 
@@ -39,6 +41,22 @@ namespace CharacterStatePlugIn
         float startTime;
 
         float journeyLength;
+
+        IEnumerator characterRotateCoroutine(Vector3 lookAt,Vector3 endPos,float yieldTime)
+        {
+            float startTime = Time.time;
+            
+            float i = 0;
+            while (i < 1)
+            {
+                i += Time.deltaTime/10;
+                Vector3 v3 = Vector3.Lerp(lookAt, endPos,i);
+                transform.LookAt(v3);
+                yield return new WaitForSeconds(0.0001f);
+            }
+            Debug.Log(Time.time-startTime);
+            yield return null;
+        }
 
         
         void Start()
@@ -69,6 +87,13 @@ namespace CharacterStatePlugIn
 
                         journeyLength = Vector3.Distance(startPosition, endPosition);
                         moveState = MovementState.running;
+
+                        this.GetComponent<Animator>().SetBool("isRunning", true);
+                        //Vector3 forwardVec = endPosition - startPosition;
+
+                        transform.LookAt(endPosition);
+
+                        //StartCoroutine(characterRotateCoroutine(transform.forward, endPosition, rotateYieldTime));
                     }
 
                     break;
@@ -101,6 +126,9 @@ namespace CharacterStatePlugIn
                             Vector3 EndPosition = path[pathIndex + 1].transform.position + characterPositionCorrection;
 
                             journeyLength = Vector3.Distance(StartPosition, EndPosition);
+
+                            //StartCoroutine(characterRotateCoroutine(transform.forward,EndPosition, rotateYieldTime));
+                            transform.LookAt(EndPosition);
                         }
 
                         
@@ -109,6 +137,7 @@ namespace CharacterStatePlugIn
                             
                             virtualPosition = new Vector2(x,z);
                             moveState = MovementState.standing;
+                            this.GetComponent<Animator>().SetBool("isRunning", false);
                             break;
                         }
                         //Sequence not end
@@ -119,6 +148,9 @@ namespace CharacterStatePlugIn
                         Vector3 endPosition = path[pathIndex + 1].transform.position + characterPositionCorrection;
 
                         journeyLength = Vector3.Distance(startPosition, endPosition);
+
+                        //StartCoroutine(characterRotateCoroutine(transform.forward, endPosition, rotateYieldTime));
+                        transform.LookAt(endPosition);
                     }
 
                     break;

@@ -153,7 +153,7 @@ public class EventController : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.tag == "Tile")
+            if (hit.transform.tag == "Tile"&&(hit.transform!= map[userCharacter.GetComponent<CharacterState>().virtualPosition]))
             {
                 if (Input.GetMouseButtonDown(0))
                 {
