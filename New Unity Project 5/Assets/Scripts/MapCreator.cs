@@ -23,7 +23,9 @@ public class MapCreator : MonoBehaviour {
     [SerializeField]
     int blockRate = 30;
     [SerializeField]
-    Material blockedMat;
+     public Material blockedMat;
+    [SerializeField]
+    public Material MoveableMat;
     
 
     enum NeighborType

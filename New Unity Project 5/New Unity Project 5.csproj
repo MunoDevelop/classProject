@@ -226,6 +226,7 @@
     <Compile Include="Assets\OutlineEffect\OutlineEffect.cs" />
     <Compile Include="Assets\Scripts\CharacterState.cs" />
     <Compile Include="Assets\Scripts\EventController.cs" />
+    <Compile Include="Assets\Scripts\LayerTile.cs" />
     <Compile Include="Assets\Scripts\MapCreator.cs" />
     <Compile Include="Assets\Scripts\Perlin.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />

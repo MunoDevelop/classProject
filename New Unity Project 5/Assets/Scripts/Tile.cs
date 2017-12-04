@@ -26,6 +26,8 @@ namespace TilePlugin
         [HideInInspector]
         public Transform NavigationFather;
 
+
+
         // Use this for initialization
         public Tile(int virX,int virZ)
         {
@@ -39,17 +41,6 @@ namespace TilePlugin
         }
 
     
-
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 
 

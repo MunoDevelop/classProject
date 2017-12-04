@@ -18,6 +18,8 @@ public class EventController : MonoBehaviour {
     [SerializeField]
     Transform userCharacter;
     [SerializeField]
+    Transform LayerTile;
+    [SerializeField]
     Vector3 userCharacterStartPosition = new Vector3(0, 2, 0);
     
 
@@ -142,6 +144,18 @@ public class EventController : MonoBehaviour {
         return pathList;
     }
 
+    public void addLayerTile(Transform tile)
+    {
+        int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
+        Vector3 v3;
+        v3.x = tile.position.x;
+        v3.y = tile.position.y + 4*(numOfLayer+1);
+        v3.z = tile.position.z;
+        Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(-90, 0, 30));
+        ins.GetComponent<LayerTile>().Belong = tile;
+        tile.GetComponent<Tile>().layerList.Add(ins);
+    }
+
     // Update is called once per frame
     private void Update()
     {
@@ -195,6 +209,28 @@ public class EventController : MonoBehaviour {
                 }
                 preTile = hit.transform;
                 //-------------
+            }
+
+            if(hit.transform.tag == "Tile"&&Input.GetMouseButtonDown(1))
+            {
+                if((hit.transform.GetComponent<Tile>().MoveAble == false)&&(hit.transform.GetComponent<Tile>().layerList.Count==0))
+                {
+                    
+                    hit.transform.GetComponent<Tile>().MoveAble = true;
+                    Material[] mats = hit.transform.GetComponent<MeshRenderer>().materials;
+                    mats[2] = Camera.main.GetComponent<MapCreator>().MoveableMat;
+                   hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                }else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+                {
+                    hit.transform.GetComponent<Tile>().MoveAble = false;
+                    addLayerTile(hit.transform);
+                }else if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
+                {
+                    if (hit.transform.GetComponent<Tile>().layerList.Count < 3)
+                    {
+                        addLayerTile(hit.transform);
+                    }
+                }
             }
         }
 
