@@ -152,8 +152,17 @@ public class EventController : MonoBehaviour {
         v3.y = tile.position.y + 4*(numOfLayer+1);
         v3.z = tile.position.z;
         Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(-90, 0, 30));
+        
         ins.GetComponent<LayerTile>().Belong = tile;
         tile.GetComponent<Tile>().layerList.Add(ins);
+    }
+
+    public void deleteLayerTile(Transform tile)
+    {
+        int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
+        Destroy(tile.GetComponent<Tile>().layerList[numOfLayer - 1].gameObject);
+        tile.GetComponent<Tile>().layerList.RemoveAt(numOfLayer - 1);
+      //  Debug.Log(tile.GetComponent<Tile>().layerList.Count);
     }
 
     // Update is called once per frame
@@ -167,13 +176,14 @@ public class EventController : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.tag == "Tile"&&(hit.transform!= map[userCharacter.GetComponent<CharacterState>().virtualPosition]))
+            //-------------PathFind
+            if (hit.transform.tag == "Tile" && (hit.transform != map[userCharacter.GetComponent<CharacterState>().virtualPosition]))
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    
 
-                     pathBuffer = findPath(map[virtualPosition], hit.transform);
+
+                    pathBuffer = findPath(map[virtualPosition], hit.transform);
                     foreach (Transform tile in map.Values)
                     {
                         tile.GetComponent<Tile>().NavigationFather = null;
@@ -187,11 +197,11 @@ public class EventController : MonoBehaviour {
                     List<Vector3> v3List = new List<Vector3>();
                     foreach (Transform tile in pathBuffer)
                     {
-                        
+
                         Vector3 pos = new Vector3(tile.transform.position.x,
-                            tile.transform.position.y+ laserYPositionCorrection,
+                            tile.transform.position.y + laserYPositionCorrection,
                             tile.transform.position.z);
-                        
+
                         v3List.Add(pos);
                     }
                     lineRenderer.positionCount = v3List.Count;
@@ -202,7 +212,7 @@ public class EventController : MonoBehaviour {
 
 
                 //-------OutLine
-                if (hit.transform != preTile&&preTile!=null)
+                if (hit.transform != preTile && preTile != null)
                 {
                     preTile.GetComponent<Outline>().enabled = false;
                     hit.transform.GetComponent<Outline>().enabled = true;
@@ -211,20 +221,23 @@ public class EventController : MonoBehaviour {
                 //-------------
             }
 
-            if(hit.transform.tag == "Tile"&&Input.GetMouseButtonDown(1))
+            // add LayerTile
+            if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(1))
             {
-                if((hit.transform.GetComponent<Tile>().MoveAble == false)&&(hit.transform.GetComponent<Tile>().layerList.Count==0))
+                if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
                 {
-                    
+
                     hit.transform.GetComponent<Tile>().MoveAble = true;
                     Material[] mats = hit.transform.GetComponent<MeshRenderer>().materials;
                     mats[2] = Camera.main.GetComponent<MapCreator>().MoveableMat;
-                   hit.transform.GetComponent<MeshRenderer>().materials = mats;
-                }else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+                    hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                }
+                else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
                 {
                     hit.transform.GetComponent<Tile>().MoveAble = false;
                     addLayerTile(hit.transform);
-                }else if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
+                }
+                else if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
                 {
                     if (hit.transform.GetComponent<Tile>().layerList.Count < 3)
                     {
@@ -232,11 +245,55 @@ public class EventController : MonoBehaviour {
                     }
                 }
             }
-        }
 
-        //--for while just
-       
-        
+            if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(1))
+            {
+                if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count < 3)
+                {
+                    addLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
+                }
+            }
+
+            // delete LayerTile
+            if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(2))
+            {
+                if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+                {
+                    hit.transform.GetComponent<Tile>().MoveAble = false;
+                    Material[] mats = hit.transform.GetComponent<MeshRenderer>().materials;
+                    mats[2] = Camera.main.GetComponent<MapCreator>().blockedMat;
+                    hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                   // Debug.Log("call");
+                }
+                if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
+                {
+
+
+                    deleteLayerTile(hit.transform);
+                    if(hit.transform.GetComponent<Tile>().layerList.Count == 0)
+                    {
+                        hit.transform.GetComponent<Tile>().MoveAble = true;
+                    }
+                    
+                }
+
+            }
+
+            if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(2))
+            {
+                if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count > 0)
+                {
+                    deleteLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
+
+                    if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count == 0)
+                    {
+                        hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().MoveAble = true;
+                    }
+                }
+            }
+
+
+        }
 
 
     }
