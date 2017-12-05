@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.2.0f3</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -219,6 +217,18 @@
     <Reference Include="UnityEngine.Purchasing">
       <HintPath>C:/Users/huozi/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
     </Reference>
+    <Reference Include="DOTween43">
+      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween43.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween46">
+      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween46.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween50">
+      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween50.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\OutlineEffect\LinkedSet.cs" />
@@ -230,6 +240,18 @@
     <Compile Include="Assets\Scripts\MapCreator.cs" />
     <Compile Include="Assets\Scripts\Perlin.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Scripts\MaterialSample.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Standard Assets\Effects\ImageEffects\Scripts\ImageEffectBase.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Standard Assets\Effects\ImageEffects\Scripts\ImageEffects.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Standard Assets\Effects\ImageEffects\Scripts\PostEffectsBase.cs" />
+    <Compile Include="Assets\Standard Shader Gallery\Standard Assets\Effects\ImageEffects\Scripts\TiltShift.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\Utils\TransformExtensionMethods.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineSettings.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineStripBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineVertexData.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricMultiLineBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Optimize SDKohaku-Chanz\Readme_Optimize_SD Kohaku-Chanz.txt" />
@@ -237,7 +259,23 @@
     <None Include="Assets\Optimize SDKohaku-Chanz\Shader\readme.txt" />
     <None Include="Assets\OutlineEffect\Resources\OutlineBufferShader.shader" />
     <None Include="Assets\OutlineEffect\Resources\OutlineShader.shader" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\DOTween.XML" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\DOTween43.xml" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\DOTween46.xml" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\DOTween50.xml" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\Editor\DOTweenEditor.XML" />
+    <None Include="Assets\Standard Shader Gallery\Demigiant\DOTween\readme.txt" />
+    <None Include="Assets\Standard Shader Gallery\Readme.txt" />
+    <None Include="Assets\Standard Shader Gallery\Shaders\PBR_Refraction.shader" />
+    <None Include="Assets\Standard Shader Gallery\Shaders\TiltShiftHdrLensBlur.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\Additive.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\AlphaBlended.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\Fast-Additive.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\Fast-AlphaBlended.shader" />
     <None Include="Assets\VolumetricLines\Shaders\Strip-Additive.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\Strip-AlphaBlended.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\_SimpleShader.cginc" />
+    <None Include="Assets\VolumetricLines\Shaders\_StripShader.cginc" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

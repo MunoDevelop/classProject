@@ -151,7 +151,7 @@ public class EventController : MonoBehaviour {
         v3.x = tile.position.x;
         v3.y = tile.position.y + 4*(numOfLayer+1);
         v3.z = tile.position.z;
-        Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(-90, 0, 30));
+        Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(0, 0, 0));
         
         ins.GetComponent<LayerTile>().Belong = tile;
         tile.GetComponent<Tile>().layerList.Add(ins);
@@ -228,9 +228,8 @@ public class EventController : MonoBehaviour {
                 {
 
                     hit.transform.GetComponent<Tile>().MoveAble = true;
-                    Material[] mats = hit.transform.GetComponent<MeshRenderer>().materials;
-                    mats[2] = Camera.main.GetComponent<MapCreator>().MoveableMat;
-                    hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                    hit.transform.GetComponent<MeshRenderer>().material= Camera.main.GetComponent<MapCreator>().MoveableMat;
+                    
                 }
                 else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
                 {
@@ -260,9 +259,9 @@ public class EventController : MonoBehaviour {
                 if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
                 {
                     hit.transform.GetComponent<Tile>().MoveAble = false;
-                    Material[] mats = hit.transform.GetComponent<MeshRenderer>().materials;
-                    mats[2] = Camera.main.GetComponent<MapCreator>().blockedMat;
-                    hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                   hit.transform.GetComponent<MeshRenderer>().material = Camera.main.GetComponent<MapCreator>().blockedMat;
+                    
+                    //hit.transform.GetComponent<MeshRenderer>().materials = mats;
                    // Debug.Log("call");
                 }
                 if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))

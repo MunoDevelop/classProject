@@ -11,7 +11,7 @@ namespace TilePlugin
         public int VirtualX;
         
         public int VirtualZ;
-        [HideInInspector]
+        
         public List<Transform> neighbors;
         [HideInInspector]
         public int Navigation_G ;
