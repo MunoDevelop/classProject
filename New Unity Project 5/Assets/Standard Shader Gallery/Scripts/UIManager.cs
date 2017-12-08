@@ -119,7 +119,7 @@ public class UIManager : MonoBehaviour {
 	// Enable or Dusable Image Effect (Blur and Dust Particle)
 	void FadePostEffect(float duration) {
 		UnityStandardAssets.ImageEffects.TiltShift _filter = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.TiltShift>();
-		Tween _fade = DOTween.To(() => _filter.blurArea, x => _filter.blurArea = x, 0f, duration)
+		  DOTween.To(() => _filter.blurArea, x => _filter.blurArea = x, 0f, duration)
 			.OnComplete(delegate () { _filter.enabled = false; });
 		ParticleSystem _ps = Camera.main.GetComponentInChildren<ParticleSystem>();
 		_ps.Stop();
@@ -129,7 +129,7 @@ public class UIManager : MonoBehaviour {
 		UnityStandardAssets.ImageEffects.TiltShift _filter = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.TiltShift>();
 		_filter.enabled = true;
 		_filter.blurArea = 0f;
-		Tween _fade = DOTween.To(() => _filter.blurArea, x => _filter.blurArea = x, 15f, duration);
+		 DOTween.To(() => _filter.blurArea, x => _filter.blurArea = x, 15f, duration);
 		ParticleSystem _ps = Camera.main.GetComponentInChildren<ParticleSystem>();
 		_ps.Play();
 	}

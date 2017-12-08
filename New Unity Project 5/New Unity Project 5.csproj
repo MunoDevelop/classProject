@@ -211,11 +211,8 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Analytics">
-      <HintPath>C:/Users/huozi/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>C:/Users/huozi/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+    <Reference Include="DOTween">
+      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>
     <Reference Include="DOTween43">
       <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween43.dll</HintPath>
@@ -226,20 +223,26 @@
     <Reference Include="DOTween50">
       <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween50.dll</HintPath>
     </Reference>
-    <Reference Include="DOTween">
-      <HintPath>Assets/Standard Shader Gallery/Demigiant/DOTween/DOTween.dll</HintPath>
+    <Reference Include="UnityEngine.Analytics">
+      <HintPath>C:/Users/huozi/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>C:/Users/huozi/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\OutlineEffect\LinkedSet.cs" />
     <Compile Include="Assets\OutlineEffect\Outline.cs" />
     <Compile Include="Assets\OutlineEffect\OutlineEffect.cs" />
+    <Compile Include="Assets\Scripts\Block.cs" />
     <Compile Include="Assets\Scripts\CharacterState.cs" />
     <Compile Include="Assets\Scripts\EventController.cs" />
+    <Compile Include="Assets\Scripts\Kakao.cs" />
     <Compile Include="Assets\Scripts\LayerTile.cs" />
     <Compile Include="Assets\Scripts\MapCreator.cs" />
     <Compile Include="Assets\Scripts\Perlin.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
+    <Compile Include="Assets\Scripts\TriangleExplosion.cs" />
     <Compile Include="Assets\Standard Shader Gallery\Scripts\MaterialSample.cs" />
     <Compile Include="Assets\Standard Shader Gallery\Scripts\UIManager.cs" />
     <Compile Include="Assets\Standard Shader Gallery\Standard Assets\Effects\ImageEffects\Scripts\ImageEffectBase.cs" />
