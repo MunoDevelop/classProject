@@ -38,7 +38,7 @@ public class Kakao : MonoBehaviour
     
     List<Vector2> requiredBlocks;
 
-    enum State { calculating, moving, deletding,final }
+    enum State { calculating, moving, sub_deletding,sub_moveBlock,sub_calculate }
 
     State kakaoState;
 
@@ -92,12 +92,13 @@ public class Kakao : MonoBehaviour
             Map[(int)v2.x].Add(trans);
         }
     }
-
+    //-------------May cause problem
     void moveRequiredBlocks()
     {
         moveIndex += Time.deltaTime * moveSpeed;
-        foreach (Vector2 v2 in requiredBlocks)
+        for(int i = 0;i<requiredBlocks.Count;i++)
         {
+            Vector2 v2 = requiredBlocks[i];
             Transform trans = Map[(int)v2.x][(int)v2.y];
             
             trans.position = Vector3.Lerp(trans.GetComponent<Block>().recentPosition, 
@@ -107,12 +108,62 @@ public class Kakao : MonoBehaviour
             if (Mathf.Abs(trans.GetComponent<Block>().recentPosition.y + movePosition.y - trans.position.y) < 0.5)
             {
                 
-                kakaoState = State.deletding;
-                
+                kakaoState = State.sub_deletding;
+                requiredBlocks.Clear();
             }
         }
         //requiredBlocks.Clear();
         //moveIndex = 0;
+    }
+
+    void sub_moveBlock()
+    {
+        moveIndex += Time.deltaTime * moveSpeed;
+        int counter = 0;
+        for(int i = 0; i < Map.Count; i++)
+        {
+            for(int j = 0; j < Map[i].Count; j++)
+            {
+                Map[i][j].GetComponent<Block>().recentPosition = Map[i][j].position;
+                counter++;
+            }
+        }
+
+
+
+
+
+        for (int i = 0; i < Map.Count; i++)
+        {
+            for (int j = 0; j < Map[i].Count; j++)
+            {
+                float VirtualX = Map[i][j].GetComponent<Block>().virtualPositionX;
+                float VirtualY = Map[i][j].GetComponent<Block>().virtualPositionY;
+
+                Vector3 destPos;
+                destPos.x = createPosition.x + movePosition.x + blockRadious * VirtualX;
+                destPos.y = createPosition.y + movePosition.y + blockRadious * VirtualY;
+                destPos.z = createPosition.z + movePosition.z;
+
+                Map[i][j].position = Vector3.Lerp(Map[i][j].GetComponent<Block>().recentPosition,
+                 destPos,
+                moveIndex);
+
+                if (Mathf.Abs(destPos.y - Map[i][j].position.y) < 0.03)
+                {
+                    counter--;
+                    
+
+                }
+            }
+        }
+        
+        if (counter == 0)
+        {
+           kakaoState = State.sub_calculate;
+        }
+
+
     }
 
     void deleteBlocks()
@@ -122,7 +173,7 @@ public class Kakao : MonoBehaviour
         List<Vector2> noSameDeleteList = new List<Vector2>();
         //int deleteCounter = 0;
 
-        for (int i = 0; i < Map.Count - 1; i++)
+        for (int i = 0; i < Map.Count -1; i++)
         {
             for (int j = 0; j < Map[i].Count - 1; j++)
             {
@@ -157,6 +208,25 @@ public class Kakao : MonoBehaviour
 
         }
 
+        if (deleteList.Count == 0)
+        {
+            foreach (List<Transform> transList in Map)
+            {
+               foreach(Transform trans in transList)
+                {
+                    Destroy(trans.gameObject);
+                }
+            }
+
+            foreach (List<Transform> transList in Map)
+            {
+                transList.Clear();
+            }
+            kakaoState = State.calculating;
+            return;
+
+        }
+
         for (int i = 0; i < deleteList.Count; i++)
         {
             if (!noSameDeleteList.Contains(deleteList.ElementAt(i)))
@@ -164,15 +234,13 @@ public class Kakao : MonoBehaviour
                 noSameDeleteList.Add(deleteList.ElementAt(i));
             }
         }
-        Debug.Log(noSameDeleteList.Count);
-        foreach (Vector2 v2 in noSameDeleteList)
-        {
-            Debug.Log(v2);
-        }
 
-        for (int i = 0; i < Map.Count; i++)
+        int imax = Map.Count;
+
+        for (int i = 0; i < imax; i++)
         {
-            for (int j = Map[i].Count; j >= 0; j--)
+            int jmax = Map[i].Count;
+            for (int j = jmax; j >= 0; j--)
             {
                 
                 if ((noSameDeleteList.Contains(new Vector2(i,j))))
@@ -190,7 +258,19 @@ public class Kakao : MonoBehaviour
         deleteList.Clear();
         noSameDeleteList.Clear();
 
-        kakaoState = State.final;
+        for (int i = 0; i < Map.Count ; i++)
+        {
+            for (int j = 0; j < Map[i].Count ; j++)
+            {
+                Map[i][j].GetComponent<Block>().virtualPositionX = i;
+                Map[i][j].GetComponent<Block>().virtualPositionY = j;
+            }
+        }
+
+
+                moveIndex = 0;
+
+        kakaoState = State.sub_moveBlock;
 
        // yield return new WaitForSeconds(111);
 
@@ -219,7 +299,59 @@ public class Kakao : MonoBehaviour
         //yield return new WaitForSeconds(111);
         return null;
     }
-    
+
+    bool hasMoreDeleteBlock()
+    {
+        List<Vector2> deleteList = new List<Vector2>();
+
+       
+        //int deleteCounter = 0;
+
+        for (int i = 0; i < Map.Count - 1; i++)
+        {
+            for (int j = 0; j < Map[i].Count - 1; j++)
+            {
+                if (j >= Map[i + 1].Count-1)
+                {
+                    continue;
+                }
+             //   Debug.Log(i + 1 + " " + (j + 1));
+                int ca = Map[i][j].GetComponent<Block>().type;
+                if (
+                    (ca == Map[i][j + 1].GetComponent<Block>().type) &&
+                    (ca == Map[i + 1][j].GetComponent<Block>().type) &&
+                    (ca == Map[i + 1][j + 1].GetComponent<Block>().type)
+                )
+                {
+                    Vector2 deleteV;
+                    deleteV.x = i;
+                    deleteV.y = j;
+                    deleteList.Add(deleteV);
+                    deleteV.x = i + 1;
+                    deleteV.y = j;
+                    deleteList.Add(deleteV);
+                    deleteV.x = i;
+                    deleteV.y = j + 1;
+                    deleteList.Add(deleteV);
+                    deleteV.x = i + 1;
+                    deleteV.y = j + 1;
+                    deleteList.Add(deleteV);
+                }
+
+            }
+
+        }
+        if (deleteList.Count > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     private void Update()
     {
         switch (kakaoState)
@@ -236,7 +368,7 @@ public class Kakao : MonoBehaviour
                  
                 break;
 
-            case State.deletding:
+            case State.sub_deletding:
 
 
 
@@ -244,7 +376,20 @@ public class Kakao : MonoBehaviour
                // Debug.Log(" x");
                 
                 break;
-            case State.final:
+            case State.sub_moveBlock:
+               sub_moveBlock();
+                break;
+
+            case State.sub_calculate:
+                if (hasMoreDeleteBlock())
+                {
+                    kakaoState = State.sub_deletding;
+                }
+                else
+                {
+                    kakaoState = State.calculating;
+                }
+                moveIndex = 0;
                 break;
         }
         
