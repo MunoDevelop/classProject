@@ -8,6 +8,7 @@ namespace TilePlugin
     public class Tile :MonoBehaviour
     {
         
+        
         public int VirtualX;
         
         public int VirtualZ;
@@ -21,7 +22,9 @@ namespace TilePlugin
         public bool MoveAble = true;
 
         [HideInInspector]
-        public List<Transform> layerList;
+        public Transform Building;
+        [HideInInspector]
+        public int BuildingNum;
 
         [HideInInspector]
         public Transform NavigationFather;

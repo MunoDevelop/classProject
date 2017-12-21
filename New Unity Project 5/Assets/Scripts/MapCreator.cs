@@ -4,6 +4,8 @@ using UnityEngine;
 using PerlinPlugin;
 using TilePlugin;
 using cakeslice;
+using LitJson;
+using System.IO;
 
 
 
@@ -20,18 +22,65 @@ public class MapCreator : MonoBehaviour {
 
     [SerializeField]
     float NoiseLevel = 10;
+
     [SerializeField]
-    int blockRate = 30;
+    public Transform TreePrefeb;
     [SerializeField]
-     public Material blockedMat;
+    public Transform StonePrefeb;
     [SerializeField]
-    public Material MoveableMat;
-    
+    public Transform RiverPrefeb;
+
 
     enum NeighborType
     { leftTop, midTop,rightTop, right, rightBottom,midBottom, leftBottom, left }
 
      public Dictionary<Vector2, Transform> map;
+
+    JsonData mapData;
+
+    void loadMap()
+    {
+        string jsonString = File.ReadAllText(Application.dataPath + "/Resource/mapData.json");
+
+         mapData = JsonMapper.ToObject(jsonString);
+
+        
+    }
+
+    public void addSthOnTile(Transform tile)
+    {
+        Vector3 v3;
+        v3.x = tile.position.x;
+        v3.y = tile.position.y + 2;
+        v3.z = tile.position.z;
+        switch (tile.GetComponent<Tile>().BuildingNum)
+        {
+            case 0:
+                
+                break;
+            case 1:
+                v3.y -= 2;
+                Transform ins = Instantiate(TreePrefeb, v3, Quaternion.Euler(0, 0, 0));
+                tile.GetComponent<Tile>().Building = ins;
+                tile.GetComponent<Tile>().MoveAble = false;
+                break;
+            case 2:
+                Transform ins1 = Instantiate(StonePrefeb, v3, Quaternion.Euler(0, 0, 0));
+                tile.GetComponent<Tile>().Building = ins1;
+                tile.GetComponent<Tile>().MoveAble = false;
+                break;
+            case 3:
+                Transform ins2 = Instantiate(RiverPrefeb, v3, Quaternion.Euler(0, 0, 0));
+                //Object.Destroy(tile.GetComponent<Tile>().Building.gameObject);
+                tile.GetComponent<Tile>().Building = ins2;
+                tile.GetComponent<Tile>().MoveAble = false;
+                // tile.GetComponent<Tile>().MoveAble = false;
+                break;
+        }
+
+
+
+    }
 
     void createMapLoop(Transform centerTile)
     {
@@ -193,7 +242,6 @@ public class MapCreator : MonoBehaviour {
         tile.GetComponent<Tile>().MoveAble = true;
         return tile;
     }
-
     void FindNeighbors(Transform centerTile)
     {
         int valX = centerTile.GetComponent<Tile>().VirtualX;
@@ -253,32 +301,36 @@ public class MapCreator : MonoBehaviour {
 
         map.Add(new Vector2(0, 0), centerTile);
         createMapLoop(centerTile);
+        
+        loadMap();
+
+        List<int> mapInt = new List<int>();
+
+        for (int i = 0; i< mapData.Count; i++)
+        {
+            int BuildingNum;
+            int.TryParse(mapData[i]["BuildingNum"].ToString(),out BuildingNum);
+            mapInt.Add(BuildingNum);
+        }
 
         foreach (Transform tile in map.Values)
         {
             FindNeighbors(tile);
-             if (tile == centerTile){
-                   continue;
-               }
-            int rand = Random.Range(0, 100);
-            if(rand<=blockRate)
-            {
-                tile.GetComponent<MeshRenderer>().material = blockedMat;
-                
-                tile.GetComponent<Tile>().MoveAble = false;
-            }
 
-
-            
+            tile.GetComponent<Tile>().BuildingNum = mapInt[0];
+            mapInt.RemoveAt(0);
+        }
+        foreach (Transform tile in map.Values)
+        {
+            addSthOnTile(tile);
         }
 
-        
-        //Debug.Log(centerTile.GetComponent<Outline>().enabled.ToString());
-        //float y = PerlinPlugin.Perlin.Noise(1.0f, 2.0f);
-        //Debug.Log(y);
-        //Instantiate(prefeb, new Vector3(x,y*10, z), Quaternion.identity);
+            //Debug.Log(centerTile.GetComponent<Outline>().enabled.ToString());
+            //float y = PerlinPlugin.Perlin.Noise(1.0f, 2.0f);
+            //Debug.Log(y);
+            //Instantiate(prefeb, new Vector3(x,y*10, z), Quaternion.identity);
 
-    }
+        }
 
 
 

@@ -16,25 +16,36 @@ public class EventController : MonoBehaviour {
     float laserYPositionCorrection = 5;
 
     [SerializeField]
-    Transform userCharacter;
-    [SerializeField]
-    Transform LayerTile;
+    public Transform userCharacter;
+   
     [SerializeField]
     Vector3 userCharacterStartPosition = new Vector3(0, 2, 0);
-    
+
+    [SerializeField]
+    public int findPathNum = 2;
+
+    [SerializeField]
+    public Transform TreePrefeb;
+    [SerializeField]
+    public Transform StonePrefeb;
+    [SerializeField]
+    public Transform RiverPrefeb;
 
     //-------------MoveMent
 
-    
+
 
     public List<Transform> pathBuffer = new List<Transform>();
     //--------------
-  
+    private void Awake()
+    {
+        userCharacter = Instantiate(userCharacter, userCharacterStartPosition, Quaternion.Euler(0, 180, 0));
+    }
     void Start () {
         map = Camera.main.GetComponent<MapCreator>().map;
         lineRenderer = this.GetComponent<LineRenderer>();
 
-       userCharacter =  Instantiate(userCharacter, userCharacterStartPosition, Quaternion.Euler(0, 180, 0));
+       
     }
 
     public Transform lowest(List<Transform> openlist)
@@ -80,7 +91,109 @@ public class EventController : MonoBehaviour {
 
     }
 
-    List<Transform> findPath(Transform startTile,Transform destTile)
+    List<Transform> findPath(Transform startTile, Transform destTile)
+    {
+        switch (findPathNum)
+        {
+            case 1:
+                List<Transform> pathList = new List<Transform>();
+                return findPathDFS(startTile, destTile, pathList);
+                //return pathList;
+                break;
+            case 2:
+                return findPathBFS(startTile, destTile);
+                break;
+            case 3:
+                return findPathAStar(startTile, destTile);
+                break;
+        }
+        return null;
+    }
+
+    List<Transform> findPathDFS(Transform startTile, Transform destTile, List<Transform> pathList)
+    {
+        //List<Transform> closeList = new List<Transform>();
+        if (startTile == destTile)
+        {
+            return pathList;
+        }
+
+        foreach(Transform child in startTile.GetComponent<Tile>().neighbors)
+        {
+            if (child.GetComponent<Tile>().MoveAble == true)
+            {
+                findPathDFS(child,destTile,pathList);
+            }
+        }
+        pathList.Add(startTile);
+           
+        
+
+        return pathList;
+    }
+
+
+    List<Transform> findPathBFS(Transform startTile, Transform destTile)
+    {
+        List<Transform> pathList = new List<Transform>();
+
+        List<Transform> openList = new List<Transform>();
+        List<Transform> closeList = new List<Transform>();
+
+        foreach (Transform tile in map.Values)
+        {
+            if (tile.GetComponent<Tile>().MoveAble == false)
+            {
+                closeList.Add(tile);
+            }
+        }
+        openList.Add(startTile);
+
+        while (openList.Count != 0)
+        {
+            Transform current = openList[0];
+
+            if (current == destTile)
+            {
+                while (current.GetComponent<Tile>().NavigationFather != null)
+                {
+                    pathList.Add(current.GetComponent<Tile>().NavigationFather);
+                    current.GetComponent<Tile>().NavigationFather = current.GetComponent<Tile>().NavigationFather.GetComponent<Tile>().NavigationFather;
+                }
+
+                pathList.Reverse();
+                pathList.Add(destTile);
+
+                return pathList;
+            }
+            openList.Remove(current);
+            closeList.Add(current);
+            foreach (Transform neibor in current.GetComponent<Tile>().neighbors)
+            {
+
+                if (closeList.Contains(neibor))
+                {
+                    continue;
+                }
+
+                
+                if (openList.Contains(neibor) == false)
+                {
+                    openList.Add(neibor);
+                }
+
+                // if this is already in the openlist
+                
+                neibor.GetComponent<Tile>().NavigationFather = current;
+
+                
+            }
+        }
+
+        return pathList;
+    }
+
+     List<Transform> findPathAStar(Transform startTile,Transform destTile)
     {
         List<Transform> pathList = new List<Transform>();
 
@@ -144,30 +257,72 @@ public class EventController : MonoBehaviour {
         return pathList;
     }
 
-    public void addLayerTile(Transform tile)
-    {
-        int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
-        Vector3 v3;
-        v3.x = tile.position.x;
-        v3.y = tile.position.y + 4*(numOfLayer+1);
-        v3.z = tile.position.z;
-        Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(0, 0, 0));
+    //public void addLayerTile(Transform tile)
+    //{
+    //    int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
+    //    Vector3 v3;
+    //    v3.x = tile.position.x;
+    //    v3.y = tile.position.y + 4*(numOfLayer+1);
+    //    v3.z = tile.position.z;
+    //    Transform ins = Instantiate(LayerTile, v3, Quaternion.Euler(0, 0, 0));
         
-        ins.GetComponent<LayerTile>().Belong = tile;
-        tile.GetComponent<Tile>().layerList.Add(ins);
+    //    ins.GetComponent<LayerTile>().Belong = tile;
+    //    tile.GetComponent<Tile>().layerList.Add(ins);
+    //}
+
+        public void addSthOnTileToggle(Transform tile)
+    {
+        Vector3 v3;
+            v3.x = tile.position.x;
+            v3.y = tile.position.y + 2;
+            v3.z = tile.position.z;
+        switch (tile.GetComponent<Tile>().BuildingNum)
+        {
+            case 0:
+                v3.y -= 2;
+                Transform ins = Instantiate(TreePrefeb, v3, Quaternion.Euler(0, 0, 0));
+                tile.GetComponent<Tile>().Building = ins;
+                tile.GetComponent<Tile>().BuildingNum = 1;
+                tile.GetComponent<Tile>().MoveAble = false;
+                break;
+            case 1:
+                Transform ins1 = Instantiate(StonePrefeb, v3, Quaternion.Euler(0, 0, 0));
+                Object.Destroy(tile.GetComponent<Tile>().Building.gameObject);
+                tile.GetComponent<Tile>().Building = ins1;
+                tile.GetComponent<Tile>().BuildingNum = 2;
+                tile.GetComponent<Tile>().MoveAble = false;
+                break;
+            case 2:
+                Transform ins2 = Instantiate(RiverPrefeb, v3, Quaternion.Euler(0, 0, 0));
+                Object.Destroy(tile.GetComponent<Tile>().Building.gameObject);
+                tile.GetComponent<Tile>().Building = ins2;
+                tile.GetComponent<Tile>().BuildingNum = 3;
+                tile.GetComponent<Tile>().MoveAble = false;
+                break;
+            case 3:
+                Object.Destroy(tile.GetComponent<Tile>().Building.gameObject);
+
+                tile.GetComponent<Tile>().BuildingNum = 0;
+                tile.GetComponent<Tile>().MoveAble = true;
+                break;
+        }
+        
+
+
     }
 
-    public void deleteLayerTile(Transform tile)
-    {
-        int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
-        Destroy(tile.GetComponent<Tile>().layerList[numOfLayer - 1].gameObject);
-        tile.GetComponent<Tile>().layerList.RemoveAt(numOfLayer - 1);
-      //  Debug.Log(tile.GetComponent<Tile>().layerList.Count);
-    }
+    //public void deleteLayerTile(Transform tile)
+    //{
+    //    int numOfLayer = tile.GetComponent<Tile>().layerList.Count;
+    //    Destroy(tile.GetComponent<Tile>().layerList[numOfLayer - 1].gameObject);
+    //    tile.GetComponent<Tile>().layerList.RemoveAt(numOfLayer - 1);
+    //  //  Debug.Log(tile.GetComponent<Tile>().layerList.Count);
+    //}
 
     // Update is called once per frame
     private void Update()
     {
+       
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -221,75 +376,82 @@ public class EventController : MonoBehaviour {
                 //-------------
             }
 
-            // add LayerTile
+
             if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(1))
             {
-                if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
-                {
-
-                    hit.transform.GetComponent<Tile>().MoveAble = true;
-                    hit.transform.GetComponent<MeshRenderer>().material= Camera.main.GetComponent<MapCreator>().MoveableMat;
-                    
-                }
-                else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
-                {
-                    hit.transform.GetComponent<Tile>().MoveAble = false;
-                    addLayerTile(hit.transform);
-                }
-                else if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
-                {
-                    if (hit.transform.GetComponent<Tile>().layerList.Count < 3)
-                    {
-                        addLayerTile(hit.transform);
-                    }
-                }
-            }
-
-            if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(1))
-            {
-                if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count < 3)
-                {
-                    addLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
-                }
-            }
-
-            // delete LayerTile
-            if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(2))
-            {
-                if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
-                {
-                    hit.transform.GetComponent<Tile>().MoveAble = false;
-                   hit.transform.GetComponent<MeshRenderer>().material = Camera.main.GetComponent<MapCreator>().blockedMat;
-                    
-                    //hit.transform.GetComponent<MeshRenderer>().materials = mats;
-                   // Debug.Log("call");
-                }
-                if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
-                {
-
-
-                    deleteLayerTile(hit.transform);
-                    if(hit.transform.GetComponent<Tile>().layerList.Count == 0)
-                    {
-                        hit.transform.GetComponent<Tile>().MoveAble = true;
-                    }
-                    
-                }
+                addSthOnTileToggle(hit.transform);
+                //hit.transform.GetComponent<Tile>().MoveAble = false;
 
             }
+            //// add LayerTile
+            //if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(1))
+            //{
+            //    if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+            //    {
 
-            if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(2))
-            {
-                if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count > 0)
-                {
-                    deleteLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
+                //        hit.transform.GetComponent<Tile>().MoveAble = true;
+                //        hit.transform.GetComponent<MeshRenderer>().material= Camera.main.GetComponent<MapCreator>().MoveableMat;
 
-                    if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count == 0)
-                    {
-                        hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().MoveAble = true;
-                    }
-                }
-            }
+                //    }
+                //    else if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+                //    {
+                //        hit.transform.GetComponent<Tile>().MoveAble = false;
+                //        addLayerTile(hit.transform);
+                //    }
+                //    else if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
+                //    {
+                //        if (hit.transform.GetComponent<Tile>().layerList.Count < 3)
+                //        {
+                //            addLayerTile(hit.transform);
+                //        }
+                //    }
+                //}
+
+                //if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(1))
+                //{
+                //    if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count < 3)
+                //    {
+                //        addLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
+                //    }
+                //}
+
+                //// delete LayerTile
+                //if (hit.transform.tag == "Tile" && Input.GetMouseButtonDown(2))
+                //{
+                //    if ((hit.transform.GetComponent<Tile>().MoveAble == true) && (hit.transform.GetComponent<Tile>().layerList.Count == 0))
+                //    {
+                //        hit.transform.GetComponent<Tile>().MoveAble = false;
+                //       hit.transform.GetComponent<MeshRenderer>().material = Camera.main.GetComponent<MapCreator>().blockedMat;
+
+                //        //hit.transform.GetComponent<MeshRenderer>().materials = mats;
+                //       // Debug.Log("call");
+                //    }
+                //    if ((hit.transform.GetComponent<Tile>().MoveAble == false) && (hit.transform.GetComponent<Tile>().layerList.Count > 0))
+                //    {
+
+
+                //        deleteLayerTile(hit.transform);
+                //        if(hit.transform.GetComponent<Tile>().layerList.Count == 0)
+                //        {
+                //            hit.transform.GetComponent<Tile>().MoveAble = true;
+                //        }
+
+                //    }
+
+                //}
+
+                //if (hit.transform.tag == "LayerTile" && Input.GetMouseButtonDown(2))
+                //{
+                //    if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count > 0)
+                //    {
+                //        deleteLayerTile(hit.transform.GetComponent<LayerTile>().Belong);
+
+                //        if (hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().layerList.Count == 0)
+                //        {
+                //            hit.transform.GetComponent<LayerTile>().Belong.GetComponent<Tile>().MoveAble = true;
+                //        }
+                //    }
+                //}
 
 
         }
